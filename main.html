@@ -34,12 +34,12 @@
 	
 	.navbar {
 		margin: auto;
-		width: 50%;
+		width: 500px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		padding: 0;
-		background-color: transparent;
+		background-color: rgba(255,255,255,.5);  // transparent
 		color: #fff;
 	}
 
@@ -136,6 +136,48 @@
 	.sidenav a.closebtn:hover {
 		background-color: transparent;
 	}
+
+	#boxes {
+		justify-content: center;
+        padding: 20px 0 0 100px;
+        width: 90%;
+        background-position: center center;
+    }
+	#leftbox {
+		float: left;
+		background: rgba(255,255,255,.3);
+		width: 25%;
+		height: 700px;
+		border:solid black;
+	}
+	#middlebox {
+		float: left;
+		background: rgba(255,255,255,.3);
+		width: 45%;
+		margin-left: 2%;
+		height: 700px;
+		border:solid black;
+	}
+	#rightbox {
+		float: right;
+		background: rgba(255,255,255,.3);
+		width: 25%;
+		height: 700px;
+		border:solid black;
+	}
+	#topbox {
+		justify-content: center;
+		background-position: center center;
+		width: 100%;
+		height: 45%;
+		border-bottom: solid black;
+	}
+	#bottombox {
+		justify-content: center;
+		background-position: center center;
+		width: 100%;
+		height: 70%;
+	}
 </style>
 
 <script>
@@ -146,10 +188,8 @@
 
 	function closeNav() {
   		document.getElementById("mySidenav").style.display = "none";
-  		document.getElementById("openSidenav").style.display = "block";
+  		document.getElementById("openSidenav").style.display = "table";
 	}
-
-	
 </script>
 
 <body>
@@ -160,14 +200,12 @@
 				<li><a href="./main.html" class="active">Home</a></li>
 				<li class="wallpapers">
 					<a href="./wallpapers.html">Wallpapers</a>
-	
-					<ul class="dropdown">
-						<li><a href="javascript:;" onclick="changeWallpaper('forest')">Forest</a></li>
-						<li><a href="javascript:;" onclick="changeWallpaper('sea')">Sea</a></li>
-						<li><a href="javascript:;" onclick="changeWallpaper('mountains')">Mountains</a></li>
-					</ul>
 
-					<li><a href="./about.html">About</a></li>
+					<ul class="dropdown">
+						<li><a href="javascript:;" onclick="changeWallpaper('./src/wallpapers/forest.jpg')">Forest</a></li>
+						<li><a href="javascript:;" onclick="changeWallpaper('./src/wallpapers/sea.jpg')">Sea</a></li>
+						<li><a href="javascript:;" onclick="changeWallpaper('./src/wallpapers/mountains.jpg')">Mountains</a></li>
+					</ul>
 				</li>
 			</div>
 		</ul>
@@ -179,29 +217,188 @@
 		<a href="https://scholar.google.com/" target="_blank">Scholar</a>
 	</div>
 	<span id="openSidenav" style="font-size: 30px;cursor: pointer;" onclick="openNav()">&#9776;</span>
+
+	<div id="boxes">
+		<div id="leftbox">
+			<div style="text-align: center; padding: 10px 0 10px 0">
+				<h3 style="display: inline; text-decoration: line-through;">To-Do List</h3>
+				<h3 style="padding: 0 0 0 5px; display: inline;">Got Done List</h3>
+			</div>
+
+			<form action="./main.html" style="text-align: center;">
+				<input type="text" id= "taskText" name="taskText" placeholder="" autocomplete="off" style="width: 75%; height: 30px; background-color: transparent;">
+				<input type="hidden" name="addTaskButton" value="true">
+				<input type="submit" value="Save" style="height: 35px; background-color: white; cursor: pointer; display: none;">
+			</form>
+
+			<form id="submitLi">
+				<input id="inputSubmitLi" type="hidden" name="taskToCheck" value="">
+				<ul id="displayTasks" style="text-align: center; display: block; width: 88%;"></ul>
+			</form>
+
+		</div>
+
+		<div id="middlebox">
+<!--			<div id="topbox">-->
+			<h3 style="text-align: center; margin: 10px 0 10px 0;">Affirmations</h3>
+
+			<form action="./main.html" style="text-align: center;">
+				<input type="text" id="affirmationText" name="affirmationText" placeholder="" autocomplete="off" style="width: 90%; height: 30px; background-color: transparent;">
+				<input type="hidden" name="addAffirmationButton" value="true">
+				<input type="submit" value="Save" style="height: 35px; background-color: white; cursor: pointer; display: none;">
+			</form>
+
+			<form id="submitAffirmation">
+				<input id="inputSubmitAffirmation" type="hidden" name="affirmationToCheck" value="">
+				<ul id="displayAffirmations" style="text-align: center; display: block; width: 100%;"></ul>
+			</form>
+<!--			</div>-->
+
+<!--			<div id="bottombox">-->
+
+
+<!--			</div>-->
+		</div>
+
+		<div id="rightbox">
+			<h3 style="text-align: center; margin: 10px 0 10px 0;">Plans</h3>
+			<form action="./main.html" style="text-align: center;">
+				<input type="text" id="planText" name="planText" placeholder="" autocomplete="off" style="width: 75%; height: 30px; background-color: transparent;">
+				<input type="hidden" name="addPlanButton" value="true">
+				<input type="submit" value="Save" style="height: 35px; background-color: white; cursor: pointer; display: none;">
+			</form>
+
+			<form id="submitPlan">
+				<input id="inputSubmitPlan" type="hidden" name="planToCheck" value="">
+				<ul id="displayPlans" style="text-align: center; display: block; width: 91%;"></ul>
+			</form>
+		</div>
+	</div>
+
 	<span id="output"></span>
 
 
-	<script type="text/javascript">
-		window.onload = setBackground();
 
-		function setBackground() {
+	<script type="text/javascript">
+		window.onload = initPage();
+
+		function initPage() {
+			loadTasks();
+			loadAffirmations();
+			loadPlans();
+
             var body = document.getElementsByTagName('body')[0];
-            
 			body.style.backgroundImage = 'url('+document.cookie.split('=')[1]+')';
-            
-            fetch("./src/db/data.txt")
-            .then((response) => response.text())
-            .then((TEXT) => document.getElementById("output").innerHTML = TEXT)
 		}
 		
 		function changeWallpaper(name) {
 			const d = new Date();
 			d.setTime(d.getTime() + (30 * 24 * 60 * 60 * 1000));
 
-			document.cookie = "wallpaper=./src/wallpapers/"+name+".jpg; expires="+d.toUTCString()+"; path=/";
+			document.cookie = "wallpaper=" + name + "; expires="+d.toUTCString()+"; path=/";
 			
 			location.reload();
+		}
+
+		function loadPlans() {
+			var ulElement = document.getElementById("displayPlans")
+
+			fetch("./src/configs/plans.txt")
+			.then(response => response.text())
+			.then(TEXT => TEXT.split(';').forEach(element => {
+				if (element.split('|')[1] != '<Plans>' && element != '') {
+					var li = document.createElement("li")
+					li.style.border = "1px solid grey"
+					li.style.width = "88%"
+					li.style.cursor = "pointer"
+					li.style.padding = "2px 2px 2px 2px"
+					li.style.transition = "0.2s"
+					li.name = "plan"
+					li.value = element
+					li.appendChild(document.createTextNode(element.split('|')[1]))
+
+					li.addEventListener('click', function handleClick(event) {
+						var form = document.getElementById("submitPlan")
+						var input = document.getElementById("inputSubmitPlan")
+						input.value = element
+						form.submit()
+					})
+					ulElement.appendChild(li)
+				}
+			}))
+
+			setTimeout(function(){
+   				window.history.replaceState({}, document.title, "/" + "main.html");
+			}, 5000);
+		}
+
+		function loadAffirmations() {
+			var ulElement = document.getElementById("displayAffirmations")
+
+			fetch("./src/configs/affirmations.txt")
+			.then(response => response.text())
+			.then(TEXT => TEXT.split(';').forEach(element => {
+				if (element.split('|')[1] != '<Affirmations>' && element != '') {
+					var li = document.createElement("li")
+					li.style.border = "1px solid grey"
+					li.style.width = "88%"
+					li.style.cursor = "pointer"
+					li.style.padding = "2px 2px 2px 2px"
+					li.style.transition = "0.2s"
+					li.name = "affirmation"
+					li.value = element
+					li.appendChild(document.createTextNode(element.split('|')[1]))
+
+					li.addEventListener('click', function handleClick(event) {
+						var form = document.getElementById("submitAffirmation")
+						var input = document.getElementById("inputSubmitAffirmation")
+						input.value = element
+						form.submit()
+					})
+					ulElement.appendChild(li)
+				}
+			}))
+
+			setTimeout(function(){
+   				window.history.replaceState({}, document.title, "/" + "main.html");
+			}, 5000);
+		}
+
+		function loadTasks() {
+			var ulElement = document.getElementById("displayTasks")
+
+			fetch("./src/configs/tasks.txt")
+			.then(response => response.text())
+			.then(TEXT => TEXT.split(';').forEach(element => {
+				if (element.split('|')[1] != '<Tasks>' && element != '') {
+					var li = document.createElement("li")
+					li.style.border = "1px solid grey"
+					li.style.width = "90%"
+					li.style.cursor = "pointer"
+					li.style.padding = "2px 2px 2px 2px"
+					li.style.transition = "0.2s"
+					li.name = "task"
+					li.value = element
+
+					if (element.split('|')[element.split('|').length - 1] == 1) {
+						li.style.textDecoration = "line-through"
+					}
+
+					li.appendChild(document.createTextNode(element.split('|')[1]))
+
+					li.addEventListener('click', function handleClick(event) {
+						var form = document.getElementById("submitLi")
+						var input = document.getElementById("inputSubmitLi")
+						input.value = element
+						form.submit()
+					})
+					ulElement.appendChild(li)
+				}
+			}))
+
+			setTimeout(function(){
+   				window.history.replaceState({}, document.title, "/" + "main.html");
+			}, 5000);
 		}
 	</script>
 	

@@ -11,6 +11,7 @@
 
 <style>
 	body {
+<!--		background-color = '#FFE5B4';-->
 		background-repeat: no-repeat;
 		background-attachment: fixed;
 		background-size: 100% 100%;
@@ -33,12 +34,12 @@
 	
 	.navbar {
 		margin: auto;
-		width: 50%;
+		width: 500px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		padding: 0;
-		background-color: transparent;
+		background-color: rgba(255,255,255,.5);  // transparent
 		color: #fff;
 	}
 
@@ -98,7 +99,6 @@
   		display: block;
 	}
 
-	
 	.sidenav {
   		display: none;
   		height: 100%;
@@ -135,6 +135,14 @@
 	.sidenav a.closebtn:hover {
 		background-color: transparent;
 	}
+    
+    #listWallpapers {
+    	justify-content: center;
+        padding: 10px 0 0 50px;
+        width: 90%;
+        background-position: center center;
+    }
+
 </style>
 
 <script>
@@ -145,7 +153,7 @@
 
 	function closeNav() {
   		document.getElementById("mySidenav").style.display = "none";
-  		document.getElementById("openSidenav").style.display = "block";
+  		document.getElementById("openSidenav").style.display = "table";
 	}
 
 	
@@ -160,13 +168,11 @@
 				<li class="wallpapers">
 					<a href="./wallpapers.html">Wallpapers</a>
 	
-					<ul class="dropdown">
-						<li><a href="javascript:;" onclick="changeWallpaper('forest')">Forest</a></li>
-						<li><a href="javascript:;" onclick="changeWallpaper('sea')">Sea</a></li>
-						<li><a href="javascript:;" onclick="changeWallpaper('mountains')">Mountains</a></li>
-					</ul>
-
-					<li><a href="./about.html">About</a></li>
+<!--					<ul class="dropdown">-->
+<!--						<li><a href="javascript:;" onclick="changeWallpaper('forest')">Forest</a></li>-->
+<!--						<li><a href="javascript:;" onclick="changeWallpaper('sea')">Sea</a></li>-->
+<!--						<li><a href="javascript:;" onclick="changeWallpaper('mountains')">Mountains</a></li>-->
+<!--					</ul>-->
 				</li>
 			</div>
 		</ul>
@@ -177,31 +183,82 @@
 		<a href="https://web.whatsapp.com" target="_blank">WhatsApp</a>
 		<a href="https://scholar.google.com/" target="_blank">Scholar</a>
 	</div>
-	<span id="openSidenav" style="font-size: 30px;cursor: pointer;" onclick="openNav()">&#9776;</span>
+	<span id="openSidenav" style="font-size: 30px; cursor: pointer;" onclick="openNav()">&#9776;</span>
 	<span id="output"></span>
 
-
+	<div id="listWallpapers"></div>
+    
 	<script type="text/javascript">
-		window.onload = setBackground();
+		window.onload = function() {
+			setBackground();
+			displayWallpapers();
+		}
 
 		function setBackground() {
             var body = document.getElementsByTagName('body')[0];
-            
-			body.style.backgroundImage = 'url('+document.cookie.split('=')[1]+')';
-            
-            fetch("./src/db/data.txt")
-            .then((response) => response.text())
-            .then((TEXT) => document.getElementById("output").innerHTML = TEXT)
+			body.style.backgroundImage = 'url(' + document.cookie.split('=')[1] + ')';
 		}
 		
 		function changeWallpaper(name) {
 			const d = new Date();
 			d.setTime(d.getTime() + (30 * 24 * 60 * 60 * 1000));
-
-			document.cookie = "wallpaper=./src/wallpapers/"+name+".jpg; expires="+d.toUTCString()+"; path=/";
+			document.cookie = "wallpaper=" + name + "; expires="+d.toUTCString()+"; path=/";
 			
 			location.reload();
 		}
+        
+        function displayWallpapers() {
+        	var imgidx = 0
+        	var dividx = -1
+        	var divLocation = document.getElementById("listWallpapers");
+        	var divElement = document.createElement("div")
+        	var breakdivElement = document.createElement("div")
+
+        	fetch('./src/configs/images.txt')
+        	.then(response => response.text())
+        	.then(images => images.split(';').forEach(image => {
+        		if (image != '') {
+					if (imgidx % 5 == 0) {
+						dividx++
+						divElement.id = "imgDiv" + dividx
+						divElement.style.justifyContent = "center"
+						divElement.style.display = "flex"
+						divElement.style.flexWrap = "wrap";
+						divElement.style.gap = "20px"
+						divElement.style.padding = "10px 0 50px 100px"
+						divElement.style.width = "90%"
+						divElement.style.backgroundPosition = "center center"
+						divLocation.appendChild(divElement)
+
+						breakdivElement.class = "break"
+						breakdivElement.style.flexBasis = "100%";
+						breakdivElement.style.height = "0";
+						divLocation.appendChild(breakdivElement)
+					}
+					var newdivLocation = document.getElementById("imgDiv" + dividx)
+
+					var aElement = document.createElement("a")
+					aElement.href = "javascript:;"
+					aElement.addEventListener('click', function handleClick(event) {
+						const d = new Date();
+						d.setTime(d.getTime() + (30 * 24 * 60 * 60 * 1000));
+
+						document.cookie = "wallpaper="+image+"; expires="+d.toUTCString()+"; path=/";
+
+						location.reload();
+					})
+					newdivLocation.appendChild(aElement)
+
+					var imgElement = document.createElement("img")
+					imgElement.src = image
+					imgElement.style.width = '192px'
+					imgElement.style.height = '108px'
+					imgElement.style.border = '2px solid #555'
+					aElement.appendChild(imgElement)
+					imgidx++
+				}
+			}))
+        }
 	</script>
 	
 </body>
